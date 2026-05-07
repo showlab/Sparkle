@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sparkle: Realizing Lively Instruction-Guided Video Background Replacement via Decoupled Guidance</title>
+
+    <meta name="description"
+          content="Sparkle: a 140K-pair video background replacement dataset, the largest benchmark for the task, and a strong derivative model trained via decoupled foreground/background guidance."/>
+    <meta property="og:title" content="Sparkle: Lively Video Background Replacement"/>
+    <meta property="og:description"
+          content="A scalable pipeline that synthesizes high-quality video background-replacement data via decoupled foreground and background guidance."/>
+    <meta property="og:type" content="website"/>
+    <meta name="twitter:card" content="summary_large_image"/>
+
+    <base target="_blank"/>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+          rel="stylesheet"/>
+
+    <style>
+        :root {
+            --sparkle-blue: #7CA7D8;
+            --sparkle-green: #7EAF5D;
+            --sparkle-red: #D16E6A;
+            --sparkle-orange: #ECB575;
+            --sparkle-coral: #E8746C;
+            --bg-soft: #fafafa;
+            --text-main: #1a1a1a;
+            --text-muted: #555;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-main);
+            background: #ffffff;
+            line-height: 1.65;
+        }
+
+        code, pre {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 4rem 1rem 2.5rem;
+            text-align: center;
+            background: linear-gradient(180deg, #ffffff 0%, var(--bg-soft) 100%);
+        }
+
+        .hero-title {
+            font-size: clamp(1.5rem, 3.2vw, 2.2rem);
+            font-weight: 700;
+            line-height: 1.25;
+            margin-bottom: 1.2rem;
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title br {
+                display: none;
+            }
+        }
+
+        .hero-title img.icon {
+            height: 1.1em;
+            vertical-align: -0.18em;
+        }
+
+        .hero-title img.sparkle-text {
+            height: 1em;
+            vertical-align: -0.12em;
+            margin: 0 0.05em;
+        }
+
+        .hero-authors {
+            font-size: 1.05rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .hero-authors sup {
+            color: var(--sparkle-coral);
+            font-weight: 600;
+        }
+
+        .hero-affil {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.6rem;
+        }
+
+        /* Buttons */
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-top: 0.6rem;
+        }
+
+        .btn-pill {
+            padding: 0.55rem 1.2rem;
+            border-radius: 999px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+
+        .btn-pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-paper {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .btn-code {
+            background: #2d2d2d;
+            color: white;
+        }
+
+        .btn-dataset {
+            background: var(--sparkle-orange);
+            color: #2a1a00;
+        }
+
+        .btn-bench {
+            background: var(--sparkle-orange);
+            color: #2a1a00;
+        }
+
+        .btn-model {
+            background: var(--sparkle-orange);
+            color: #2a1a00;
+        }
+
+        /* Demo showcase */
+        .demos {
+            padding: 2.5rem 1rem 3rem;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .demo-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .demo-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .demo-theme {
+            align-self: flex-start;
+            padding: 0.25rem 0.85rem;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            margin-bottom: 0.6rem;
+            text-transform: uppercase;
+        }
+
+        .demo-theme.location {
+            background: #dbe7f4;
+            color: #3a6da3;
+        }
+
+        .demo-theme.season {
+            background: #dfead0;
+            color: #4a7332;
+        }
+
+        .demo-theme.time {
+            background: #f1d7d4;
+            color: #9d3b37;
+        }
+
+        .demo-theme.style {
+            background: #f8e6c4;
+            color: #876020;
+        }
+
+        .demo-videos {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.4rem;
+        }
+
+        .demo-videos video {
+            width: 100%;
+            border-radius: 6px;
+            display: block;
+            background: #000;
+        }
+
+        .demo-prompt {
+            margin-top: 0.7rem;
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+            font-style: italic;
+        }
+
+        /* Tracker section reuses .demo-row / .demo-block layout */
+        .tracker-wrap {
+          max-width: 1100px;
+          margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .demo-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sections */
+        section {
+            padding: 3rem 1rem;
+        }
+
+        section.alt {
+            background: var(--bg-soft);
+        }
+
+        .section-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin-bottom: 1.4rem;
+            text-align: center;
+        }
+
+        .section-body {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .section-body p {
+            font-size: 1.02rem;
+            color: var(--text-main);
+        }
+
+        /* Method figure */
+        .figure-wrap {
+            max-width: 1100px;
+            margin: 1.5rem auto 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        }
+
+        .figure-wrap img {
+            width: 100%;
+            display: block;
+        }
+
+        /* Comparison grids */
+        .comp-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+            max-width: 950px;
+            margin: 0 auto 1.6rem;
+        }
+
+        .comp-grid video, .comp-grid img {
+            width: 100%;
+            border-radius: 8px;
+            display: block;
+        }
+
+        .comp-label {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .comp-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Comparison row wrapper: groups 3 videos + 1 prompt below */
+        .comp-row {
+          max-width: 1200px;
+          margin: 0 auto 2.2rem;
+        }
+        .comp-row .comp-grid {
+          margin-bottom: 0.5rem;
+        }
+        .comp-prompt {
+          text-align: center;
+          margin: 0 auto;
+          max-width: 1000px;
+          padding: 0 1rem;
+          font-size: 0.92rem;
+          color: var(--text-muted);
+          font-style: italic;
+          line-height: 1.55;
+        }
+
+        /* Tables */
+        .results-table {
+            max-width: 1000px;
+            margin: 0 auto;
+            font-size: 0.92rem;
+        }
+
+        .results-table th, .results-table td {
+            padding: 0.55rem 0.7rem;
+            vertical-align: middle;
+        }
+
+        .results-table thead th {
+            background: var(--bg-soft);
+            border-bottom: 2px solid #ddd;
+            font-weight: 600;
+        }
+
+        .ours-row {
+            background: #fff7e6;
+            font-weight: 600;
+        }
+
+        /* BibTeX */
+        .bibtex-box {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1a1a1a;
+            color: #f0f0f0;
+            border-radius: 8px;
+            padding: 1.2rem 1.4rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.55;
+            overflow-x: auto;
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem 1rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ============ Hero ============ -->
+<header class="hero">
+    <h1 class="hero-title">
+        <img src="assets/sparkle-icon.png" alt="" class="icon"/>
+        <img src="assets/sparkle-text.svg" alt="Sparkle" class="sparkle-text"/>:
+        Realizing Lively Instruction-Guided<br/>
+        Video Background Replacement via Decoupled Guidance
+    </h1>
+
+    <p class="hero-authors">
+        <a href="https://stdkonjac.icu/">Ziyun Zeng</a>,
+        Yiqi Lin,
+        <a href="https://ethanliang99.github.io/">Guoqiang Liang</a>,
+        <a href="https://cde.nus.edu.sg/ece/staff/shou-zheng-mike/">Mike Zheng Shou</a>
+    </p>
+    <p class="hero-affil">
+        <a href="https://sites.google.com/view/showlab">Show Lab</a>, National University of Singapore
+    </p>
+
+    <div class="btn-row">
+        <a class="btn-pill btn-paper" href="https://arxiv.org/abs/XXX">
+            <i class="bi bi-file-earmark-text"></i> Paper
+        </a>
+        <a class="btn-pill btn-code" href="https://github.com/showlab/Sparkle">
+            <i class="bi bi-github"></i> Code
+        </a>
+        <a class="btn-pill btn-dataset" href="https://huggingface.co/datasets/stdKonjac/Sparkle">
+            🤗 Dataset
+        </a>
+        <a class="btn-pill btn-bench" href="https://huggingface.co/datasets/stdKonjac/Sparkle-Bench">
+            🤗 Benchmark
+        </a>
+        <a class="btn-pill btn-model" href="https://huggingface.co/stdKonjac/Kiwi-Sparkle-720P-81F">
+            🤗 Model
+        </a>
+    </div>
+</header>
+
+<!-- ============ Demo Showcase (4 rows × 2 columns) ============ -->
+<section>
+    <div class="demos">
+
+        <!-- Row 1: Location -->
+        <div class="demo-row">
+            <div class="demo-block">
+                <span class="demo-theme location">Location-rural-vineyard rows with rustling leaves</span>
+                <div class="demo-videos">
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/demo_videos/Sparkle_location_000223_source.mp4" type="video/mp4"/>
+                    </video>
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/demo_videos/Sparkle_location_000223_edited.mp4" type="video/mp4"/>
+                    </video>
+                </div>
+                <p class="demo-prompt">Shift the background to a sunlit vineyard with rows of grapevines stretching into
+                    the distance, where golden light filters through rustling green leaves gently swaying in a warm
+                    breeze, and soft shadows dance across the earth below.</p>
+            </div>
+
+            <div class="demo-block">
+                <span class="demo-theme location">Location-rural-open prairie with tall grass waving</span>
+                <div class="demo-videos">
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/demo_videos/Sparkle_location_000598_source.mp4" type="video/mp4"/>
+                    </video>
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/demo_videos/Sparkle_location_000598_edited.mp4" type="video/mp4"/>
+                    </video>
+                </div>
+                <p class="demo-prompt">Place the subject in an open prairie under a vast sky, with tall golden grass
+                    swaying vigorously in a strong wind, creating waves of motion across the landscape, and distant
+                    rolling hills fading into a hazy horizon.</p>
+            </div>
+        </div>
+
+        <!-- Row 2: Season -->
+        <div class="demo-row">
+            <div class="demo-block">
+                <span class="demo-theme season">Season-spring-melting snow revealing grass</span>
+                <div class="demo-videos">
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/demo_videos/Sparkle_season_000029_source.mp4" type="video/mp4"/>
+                    </video>
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/demo_videos/Sparkle_season_000029_edited.mp4" type="video/mp4"/>
+                    </video>
+                </div>
+                <p class="demo-prompt">Put the subject against a spring meadow where melting snow reveals patches of
+                    vibrant green grass, with gentle streams of water flowing over the ground and sunlight filtering
+                    through budding trees, creating soft, shifting shadows and glistening droplets in the air.</p>
+            </div>
+
+            <div class="demo-block">
+                <span class="demo-theme season">Season-spring-cherry blossoms in full bloom</span>
+                <div class="demo-videos">
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/demo_videos/Sparkle_season_000111_source.mp4" type="video/mp4"/>
+                    </video>
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/demo_videos/Sparkle_season_000111_edited.mp4" type="video/mp4"/>
+                    </video>
+                </div>
+                <p class="demo-prompt">Move the subject to a serene spring park filled with cherry blossom trees in full
+                    bloom, soft golden sunlight filtering through the pink canopies, and delicate petals gently drifting
+                    through the air in a subtle, animated breeze.</p>
+            </div>
+        </div>
+
+        <!-- Row 3: Time -->
+        <div class="demo-row">
+            <div class="demo-block">
+                <span class="demo-theme time">Time-dusk-silhouette lighting against fading sun</span>
+                <div class="demo-videos">
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/demo_videos/Sparkle_time_000028_source.mp4" type="video/mp4"/>
+                    </video>
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/demo_videos/Sparkle_time_000028_edited.mp4" type="video/mp4"/>
+                    </video>
+                </div>
+                <p class="demo-prompt">Shift the background to a serene twilight landscape with the fading sun casting
+                    warm orange and pink hues across the horizon, silhouetting distant trees that sway gently in the
+                    breeze, while soft, drifting clouds slowly move across the sky illuminated by the last rays of
+                    light.</p>
+            </div>
+
+            <div class="demo-block">
+                <span class="demo-theme time">Time-dawn-morning mist rolling over terrain</span>
+                <div class="demo-videos">
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/demo_videos/Sparkle_time_000367_source.mp4" type="video/mp4"/>
+                    </video>
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/demo_videos/Sparkle_time_000367_edited.mp4" type="video/mp4"/>
+                    </video>
+                </div>
+                <p class="demo-prompt">Place the subject in a serene morning landscape where soft golden light filters
+                    through a thick layer of rolling mist over a forested valley, with drifting fog gently swaying
+                    between trees and subtle sunbeams piercing through the canopy.</p>
+            </div>
+        </div>
+
+        <!-- Row 4: Style -->
+        <div class="demo-row">
+            <div class="demo-block">
+                <span class="demo-theme style">Style-era-medieval stone-and-timber village setting</span>
+                <div class="demo-videos">
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/demo_videos/Sparkle_style_000298_source.mp4" type="video/mp4"/>
+                    </video>
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/demo_videos/Sparkle_style_000298_edited.mp4" type="video/mp4"/>
+                    </video>
+                </div>
+                <p class="demo-prompt">Move the subject to a medieval stone-and-timber village setting with cobblestone
+                    paths, thatched-roof cottages, and wooden beams, where warm flickering torchlight casts dancing
+                    shadows and embers float gently in the evening air.</p>
+            </div>
+
+            <div class="demo-block">
+                <span class="demo-theme style">Style-cinematic-sci-fi dystopian industrial wasteland</span>
+                <div class="demo-videos">
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/demo_videos/Sparkle_style_000737_source.mp4" type="video/mp4"/>
+                    </video>
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/demo_videos/Sparkle_style_000737_edited.mp4" type="video/mp4"/>
+                    </video>
+                </div>
+                <p class="demo-prompt">Set the scene to a sci-fi dystopian industrial wasteland with crumbling metallic
+                    structures, flickering neon signs, and floating debris drifting slowly in the air. Add a hazy, toxic
+                    orange glow emanating from distant smelters, with subtle animated smoke trails rising from broken
+                    pipes.</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ============ Abstract ============ -->
+<section class="alt">
+    <h2 class="section-title">Abstract</h2>
+    <div class="section-body">
+        <p>
+            In recent years, open-source efforts like Se&ntilde;orita-2M have propelled video editing toward
+            natural language instruction. However, current publicly available datasets predominantly focus on
+            local editing or style transfer, which largely preserve the original scene structure and are easier
+            to scale. In contrast, <em>Background Replacement</em>, a task central to creative applications
+            such as film production and advertising, requires synthesizing entirely new, temporally consistent
+            scenes while maintaining accurate foreground-background interactions, making large-scale data
+            generation significantly more challenging. Consequently, this complex task remains largely
+            underexplored due to a scarcity of high-quality training data. This gap is evident in poorly
+            performing state-of-the-art models, <em>e.g.</em>, Kiwi-Edit, because the primary open-source
+            dataset that contains this task, <em>i.e.</em>, OpenVE-3M, frequently produces static, unnatural
+            backgrounds.
+        </p>
+        <p>
+            In this paper, we trace this quality degradation to <b>a lack of precise background guidance</b>
+            during data synthesis. Accordingly, we design a scalable pipeline that generates foreground and
+            background guidance in a decoupled manner with strict quality filtering. Building on this pipeline,
+            we introduce <b>Sparkle</b>, a dataset of ~140K video pairs spanning five common background-change
+            themes, alongside <b>Sparkle-Bench</b>, the largest evaluation benchmark tailored for background
+            replacement to date. Experiments demonstrate that our dataset and the model trained on it achieve
+            substantially better performance than all existing baselines on both OpenVE-Bench and Sparkle-Bench.
+            Our proposed dataset, benchmark, and model are fully open-sourced at
+            <a href="https://github.com/showlab/Sparkle">github.com/showlab/Sparkle</a>.
+        </p>
+    </div>
+</section>
+
+<!-- ============ Data Pipeline ============ -->
+<section>
+  <h2 class="section-title">Data Pipeline</h2>
+
+  <div class="section-body">
+    <p>
+      We build Sparkle from a sequential 5-stage pipeline whose central design choice is to
+      <strong>decouple foreground and background guidance throughout data synthesis</strong>.
+      The full pipeline is illustrated below.
+    </p>
+  </div>
+
+  <div class="figure-wrap" style="max-width: 850px;">
+    <img src="assets/pipeline.png" alt="Sparkle 5-stage data pipeline" />
+  </div>
+
+  <div class="section-body" style="margin-top: 2.5rem;">
+
+    <p>
+      <strong>Stage 1: Fixed-Camera Source Video Filtering.</strong>
+      Unimatch optical flow with RANSAC homography (coarse) and Qwen3-VL-32B chain-of-thought
+      reasoning (fine) reduce ~940K source candidates down to ~224K static-camera videos.
+    </p>
+
+    <p>
+      <strong>Stage 2: Preliminary Background Replacement.</strong>
+      Qwen3-VL-32B composes an editing instruction over our scene taxonomy of 4 themes and ~22
+      subthemes, FLUX.2-klein-9B edits the first frame, and EditScore filters out misaligned
+      outputs.
+    </p>
+
+    <p>
+      <strong>Stage 3: Individual Background Generation.</strong>
+      To enable explicit background guidance, we detach the foreground entirely: Qwen3-VL-32B
+      grounds foreground objects, FLUX.2-klein-9B erases them, and Wan2.2-I2V-A14B animates the
+      resulting clean image into a foreground-free dynamic background video.
+    </p>
+
+    <p>
+      <strong>Stage 4: BAIT Foreground Tracking.</strong>
+      <em>Bbox-Anchor-In-Temporal (BAIT)</em> runs SAM3 from N frame-wise foreground bounding boxes
+      detected at 2 FPS by Qwen3-VL-32B, then pixel-wise votes the N resulting masks into a clean
+      and precise foreground mask, suppressing entity loss and noise glitches that plague
+      single-pass tracking.
+    </p>
+
+    <p>
+      <strong>Stage 5: Edited Video Generation with Decoupled Guidance.</strong>
+      Source and synthesized-background Canny edges are fused along the BAIT mask and consumed by
+      Wan2.2-Fun-A14B-Control to regenerate the final video, with a last EditScore pass discarding
+      low-quality outputs.
+    </p>
+
+  </div>
+</section>
+
+<!-- ============ Comparison: OpenVE-3M vs Sparkle ============ -->
+<section class="alt">
+  <h2 class="section-title">OpenVE-3M vs. Sparkle</h2>
+  <div class="section-body">
+    <p>
+      Given identical source videos and editing prompts, OpenVE-3M frequently suffers from
+      <em>prompt misalignment</em> and <em>unnaturally static backgrounds</em>. Sparkle, in contrast,
+      faithfully renders requested elements and preserves background dynamics.
+    </p>
+  </div>
+
+  <!-- Sample 1: Sparkle_openve3m_000006 -->
+  <div class="comp-row">
+    <div class="comp-grid">
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/data_compare_openve3m_sparkle/Sparkle_openve3m_000006_source.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Source</p>
+      </div>
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/data_compare_openve3m_sparkle/Sparkle_openve3m_000006_edited_openve3m.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">OpenVE-3M</p>
+      </div>
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/data_compare_openve3m_sparkle/Sparkle_openve3m_000006_edited.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Sparkle (Ours)</p>
+      </div>
+    </div>
+    <p class="comp-prompt">Replace the background with a classic library study. The desk lamp flickers softly, dust motes float in the warm light, and a gentle breeze causes the curtains to sway slightly. The subject should remain perfectly still.</p>
+  </div>
+
+  <!-- Sample 2: Sparkle_openve3m_000030 -->
+  <div class="comp-row">
+    <div class="comp-grid">
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/data_compare_openve3m_sparkle/Sparkle_openve3m_000030_source.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Source</p>
+      </div>
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/data_compare_openve3m_sparkle/Sparkle_openve3m_000030_edited_openve3m.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">OpenVE-3M</p>
+      </div>
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/data_compare_openve3m_sparkle/Sparkle_openve3m_000030_edited.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Sparkle (Ours)</p>
+      </div>
+    </div>
+    <p class="comp-prompt">Replace the background with a lively tropical beach where waves gently roll in, palm fronds sway in a light breeze, seagulls fly in the distance, and sunlight sparkles on the water surface, while the foreground character remains still.</p>
+  </div>
+
+  <!-- Sample 3: Sparkle_openve3m_000152 -->
+  <div class="comp-row">
+    <div class="comp-grid">
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/data_compare_openve3m_sparkle/Sparkle_openve3m_000152_source.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Source</p>
+      </div>
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/data_compare_openve3m_sparkle/Sparkle_openve3m_000152_edited_openve3m.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">OpenVE-3M</p>
+      </div>
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/data_compare_openve3m_sparkle/Sparkle_openve3m_000152_edited.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Sparkle (Ours)</p>
+      </div>
+    </div>
+    <p class="comp-prompt">Replace the background with a dynamic vintage European street cafe. The scene should include flickering street lamps, gentle movement of leaves in a light breeze, and occasional passersby strolling softly in the distance. The subject should remain perfectly still.</p>
+  </div>
+
+  <!-- Sample 4: Sparkle_openve3m_000185 -->
+  <div class="comp-row">
+    <div class="comp-grid">
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/data_compare_openve3m_sparkle/Sparkle_openve3m_000185_source.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Source</p>
+      </div>
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/data_compare_openve3m_sparkle/Sparkle_openve3m_000185_edited_openve3m.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">OpenVE-3M</p>
+      </div>
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/data_compare_openve3m_sparkle/Sparkle_openve3m_000185_edited.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Sparkle (Ours)</p>
+      </div>
+    </div>
+    <p class="comp-prompt">Transform the background into a lively enchanted forest clearing with gentle rays of sunlight flickering through leaves, soft wind causing subtle movement in the foliage, and occasional floating motes of light drifting through the air. The person remains still in the foreground.</p>
+  </div>
+
+</section>
+
+<!-- ============ Comparison: Kiwi-Edit vs Kiwi-Sparkle ============ -->
+<section>
+  <h2 class="section-title">Kiwi-Edit vs. Kiwi-Sparkle</h2>
+  <div class="section-body">
+    <p>
+      Fine-tuning Kiwi-Edit on Sparkle (yielding <strong>Kiwi-Sparkle</strong>) restores dynamic
+      backgrounds and harmonizes foreground lighting with the new scene, without any architectural
+      changes. We illustrate the comparisons below.
+    </p>
+  </div>
+
+  <!-- Sample 1: Location -->
+  <div class="comp-row">
+    <div class="comp-grid">
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/eval_results_sparkle_bench/Sparkle_location_010009.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Source</p>
+      </div>
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/eval_results_sparkle_bench/Sparkle_location_010009_edited_kiwi.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Kiwi-Edit</p>
+      </div>
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/eval_results_sparkle_bench/Sparkle_location_010009_edited.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Kiwi-Sparkle (Ours)</p>
+      </div>
+    </div>
+    <p class="comp-prompt">Put the subject against a cascading waterfall flowing over mossy rocks in a lush forest, with mist gently rising and sunlight filtering through swaying trees in the background.</p>
+  </div>
+
+  <!-- Sample 2: Season -->
+  <div class="comp-row">
+    <div class="comp-grid">
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/eval_results_sparkle_bench/Sparkle_season_004842.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Source</p>
+      </div>
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/eval_results_sparkle_bench/Sparkle_season_004842_edited_kiwi.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Kiwi-Edit</p>
+      </div>
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/eval_results_sparkle_bench/Sparkle_season_004842_edited.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Kiwi-Sparkle (Ours)</p>
+      </div>
+    </div>
+    <p class="comp-prompt">Set the scene to a sweltering summer day with heat haze shimmering across a dry, sunbaked earth. Replace the forest with sparse, heat-stressed shrubs and cracked soil, and add dynamic, rising waves of shimmering air distorting the horizon under a bright, glaring sun.</p>
+  </div>
+
+  <!-- Sample 3: Time -->
+  <div class="comp-row">
+    <div class="comp-grid">
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/eval_results_sparkle_bench/Sparkle_time_002157.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Source</p>
+      </div>
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/eval_results_sparkle_bench/Sparkle_time_002157_edited_kiwi.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Kiwi-Edit</p>
+      </div>
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/eval_results_sparkle_bench/Sparkle_time_002157_edited.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Kiwi-Sparkle (Ours)</p>
+      </div>
+    </div>
+    <p class="comp-prompt">Swap the background to a serene dawn scene where the first rays of golden light break through soft, drifting clouds, casting dynamic, elongated shadows across a misty forest clearing, with gentle ripples on a nearby pond reflecting the rising sun.</p>
+  </div>
+
+  <!-- Sample 4: Style -->
+  <div class="comp-row">
+    <div class="comp-grid">
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/eval_results_sparkle_bench/Sparkle_style_001323.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Source</p>
+      </div>
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/eval_results_sparkle_bench/Sparkle_style_001323_edited_kiwi.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Kiwi-Edit</p>
+      </div>
+      <div>
+        <video autoplay muted loop playsinline>
+          <source src="assets/eval_results_sparkle_bench/Sparkle_style_001323_edited.mp4" type="video/mp4" />
+        </video>
+        <p class="comp-label">Kiwi-Sparkle (Ours)</p>
+      </div>
+    </div>
+    <p class="comp-prompt">Change the background to an oil painting style with visible brushstroke textures, depicting a dynamic, smoky forest at dusk with flickering embers drifting upward from a glowing campfire, and soft, swirling mist moving across the scene to create a sense of flowing energy.</p>
+  </div>
+
+</section>
+
+<!-- ============ Kiwi-Sparkle as Foreground Tracker ============ -->
+<section class="alt">
+  <h2 class="section-title">Kiwi-Sparkle as a Foreground Tracker</h2>
+  <div class="section-body">
+    <p>
+      Kiwi-Sparkle inherits a strong foreground tracking
+      capability from our BAIT algorithm. By prompting it with the trigger phrase
+      <em>"a minimalist clean white space"</em>, Kiwi-Sparkle cleanly isolates complex foreground
+      subjects onto a clean white background, suggesting a potential editing-oriented object
+      segmentation paradigm.
+    </p>
+  </div>
+
+  <div class="tracker-wrap">
+
+    <!-- Row 1 -->
+    <div class="demo-row">
+      <div class="demo-block">
+        <div class="demo-videos">
+          <video autoplay muted loop playsinline>
+            <source src="assets/kiwi_sparkle_as_foreground_tracker/Sparkle_style_001408.mp4" type="video/mp4" />
+          </video>
+          <video autoplay muted loop playsinline>
+            <source src="assets/kiwi_sparkle_as_foreground_tracker/Sparkle_style_001408_edited.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <p class="demo-prompt">Change the background to a minimalist clean white space with subtle floating particles that gently drift upward and softly glow, creating a serene and dynamic atmosphere while preserving spatial coherence.</p>
+      </div>
+
+      <div class="demo-block">
+        <div class="demo-videos">
+          <video autoplay muted loop playsinline>
+            <source src="assets/kiwi_sparkle_as_foreground_tracker/Sparkle_style_003759.mp4" type="video/mp4" />
+          </video>
+          <video autoplay muted loop playsinline>
+            <source src="assets/kiwi_sparkle_as_foreground_tracker/Sparkle_style_003759_edited.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <p class="demo-prompt">Replace the background with a minimalist clean white space, featuring a subtle gradient of soft light that gently shifts across the surface, and add faint, slowly drifting white particles that float upward, creating a serene and dynamic atmosphere.</p>
+      </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="demo-row">
+      <div class="demo-block">
+        <div class="demo-videos">
+          <video autoplay muted loop playsinline>
+            <source src="assets/kiwi_sparkle_as_foreground_tracker/Sparkle_style_005093.mp4" type="video/mp4" />
+          </video>
+          <video autoplay muted loop playsinline>
+            <source src="assets/kiwi_sparkle_as_foreground_tracker/Sparkle_style_005093_edited.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <p class="demo-prompt">Place the subject in a minimalist clean white space background with soft, floating white particles drifting gently upward, creating a serene and animated atmosphere.</p>
+      </div>
+
+      <div class="demo-block">
+        <div class="demo-videos">
+          <video autoplay muted loop playsinline>
+            <source src="assets/kiwi_sparkle_as_foreground_tracker/Sparkle_style_009695.mp4" type="video/mp4" />
+          </video>
+          <video autoplay muted loop playsinline>
+            <source src="assets/kiwi_sparkle_as_foreground_tracker/Sparkle_style_009695_edited.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <p class="demo-prompt">Swap the background to a minimalist clean white space with soft, floating particles gently drifting upward and subtle light reflections shimmering across the surface, maintaining a serene and animated atmosphere.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ Quantitative Results ============ -->
+<section class="alt">
+    <h2 class="section-title">Bench Results: Kiwi-Edit vs. SOTA vs. Kiwi-Sparkle</h2>
+
+    <div class="section-body">
+        <p style="text-align: center; margin-bottom: 1rem;"><strong>OpenVE-Bench</strong></p>
+        <table class="table results-table">
+            <thead>
+            <tr>
+                <th>Model</th>
+                <th>Params</th>
+                <th>Overall</th>
+                <th>Ins.</th>
+                <th>Cons.</th>
+                <th>VQ.</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Kiwi-Edit</td>
+                <td>5B</td>
+                <td>2.58</td>
+                <td>2.81</td>
+                <td>2.58</td>
+                <td>2.36</td>
+            </tr>
+            <tr>
+                <td>UniVideo</td>
+                <td>13B</td>
+                <td>2.74</td>
+                <td>3.12</td>
+                <td>2.64</td>
+                <td>2.46</td>
+            </tr>
+            <tr class="ours-row">
+                <td>Kiwi-Sparkle (Ours)</td>
+                <td>5B</td>
+                <td>3.29</td>
+                <td>3.51</td>
+                <td>3.15</td>
+                <td>3.22</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <p style="text-align: center; margin: 2rem 0 1rem;"><strong>Sparkle-Bench</strong></p>
+        <table class="table results-table">
+            <thead>
+            <tr>
+                <th>Model</th>
+                <th>Overall</th>
+                <th>Ins.</th>
+                <th>Vis.</th>
+                <th>FgIn.</th>
+                <th>FgMo.</th>
+                <th>BgDy.</th>
+                <th>BgVi.</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Kiwi-Edit</td>
+                <td>2.54</td>
+                <td>2.92</td>
+                <td>2.15</td>
+                <td>2.86</td>
+                <td>2.90</td>
+                <td>1.57</td>
+                <td>2.84</td>
+            </tr>
+            <tr>
+                <td>Lucy-Edit-1.1</td>
+                <td>2.74</td>
+                <td>3.06</td>
+                <td>2.23</td>
+                <td>2.78</td>
+                <td>3.04</td>
+                <td>2.46</td>
+                <td>2.83</td>
+            </tr>
+            <tr class="ours-row">
+                <td>Kiwi-Sparkle (Ours)</td>
+                <td>3.81</td>
+                <td>4.10</td>
+                <td>3.40</td>
+                <td>3.77</td>
+                <td>4.05</td>
+                <td>3.54</td>
+                <td>3.99</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ============ BibTeX ============ -->
+<section>
+    <h2 class="section-title">BibTeX</h2>
+    <pre class="bibtex-box"><code>@misc{zeng2026sparkle,
+  title         = {Sparkle: Realizing Lively Instruction-Guided Video Background Replacement via Decoupled Guidance},
+  author        = {Zeng, Ziyun and Lin, Yiqi and Liang, Guoqiang and Shou, Mike Zheng},
+  year          = {2026},
+  eprint        = {XXX},
+  archivePrefix = {arXiv}
+}</code></pre>
+</section>
+
+<!-- ============ Footer ============ -->
+<footer>
+    Source code: <a href="https://github.com/showlab/Sparkle">github.com/showlab/Sparkle</a>.
+</footer>
+
+</body>
+</html>
