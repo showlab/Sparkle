@@ -3,7 +3,7 @@
 [Ziyun Zeng](https://stdkonjac.icu/), Yiqi Lin, [Guoqiang Liang](https://ethanliang99.github.io/), and [Mike Zheng Shou](https://cde.nus.edu.sg/ece/staff/shou-zheng-mike/)
 
 [![arXiv](https://img.shields.io/badge/arXiv-XXX-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/XXX)
-[![Project Page](https://img.shields.io/badge/Website-Project%20Page-green?logo=googlechrome&logoColor=white)](#)
+[![Project Page](https://img.shields.io/badge/Website-Project%20Page-green?logo=googlechrome&logoColor=white)](https://showlab.github.io/Sparkle/)
 [![Code](https://img.shields.io/badge/Code-GitHub%20Repo-blue?logo=github)](https://github.com/showlab/Sparkle)
 [![Dataset](https://img.shields.io/badge/🤗%20Dataset-Sparkle-orange.svg)](https://huggingface.co/datasets/stdKonjac/Sparkle)
 [![Benchmark](https://img.shields.io/badge/🤗%20Benchmark-Sparkle--Bench-orange.svg)](https://huggingface.co/datasets/stdKonjac/Sparkle-Bench)
