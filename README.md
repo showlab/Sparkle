@@ -2,7 +2,7 @@
 
 [Ziyun Zeng](https://stdkonjac.icu/), Yiqi Lin, [Guoqiang Liang](https://ethanliang99.github.io/), and [Mike Zheng Shou](https://cde.nus.edu.sg/ece/staff/shou-zheng-mike/)
 
-[![arXiv](https://img.shields.io/badge/arXiv-XXX-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/XXX)
+[![arXiv](https://img.shields.io/badge/arXiv-Paper-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2605.06535)
 [![Project Page](https://img.shields.io/badge/Website-Project%20Page-green?logo=googlechrome&logoColor=white)](https://showlab.github.io/Sparkle/)
 [![Code](https://img.shields.io/badge/Code-GitHub%20Repo-blue?logo=github)](https://github.com/showlab/Sparkle)
 [![Dataset](https://img.shields.io/badge/🤗%20Dataset-Sparkle-orange.svg)](https://huggingface.co/datasets/stdKonjac/Sparkle)
@@ -12,7 +12,7 @@
 
 ## 📦 Dataset
 
-**Sparkle** is a large-scale video background replacement dataset comprising ~140K high-quality source–edited video pairs. It is fully open-sourced at [🤗stdKonjac/Sparkle](https://huggingface.co/datasets/stdKonjac/Sparkle). For full methodology and dataset details, please refer to [our paper](https://arxiv.org/abs/XXX).
+**Sparkle** is a large-scale video background replacement dataset comprising ~140K high-quality source–edited video pairs. It is fully open-sourced at [🤗stdKonjac/Sparkle](https://huggingface.co/datasets/stdKonjac/Sparkle). For full methodology and dataset details, please refer to [our paper](https://arxiv.org/abs/2605.06535).
 
 The dataset is organized into **five themes** along different background-change axes:
 
@@ -149,7 +149,7 @@ After extraction, the directory layout matches the online preview structure, and
 <details>
 <summary><h3 style="display: inline">🧪 Pipeline Intermediates</h3></summary>
 
-To support **full reproducibility, transparency, and downstream research**, we additionally release every intermediate artifact produced by the 5-stage Sparkle data pipeline (see *Figure 2: Data Pipeline* in [our paper](https://arxiv.org/abs/XXX)) under `intermediate_data/`. **The first 100 samples of every theme are uncompressed and previewable directly in the browser**, mirroring the layout of the `{edit_type}/` preview folders described above.
+To support **full reproducibility, transparency, and downstream research**, we additionally release every intermediate artifact produced by the 5-stage Sparkle data pipeline (see *Figure 2: Data Pipeline* in [our paper](https://arxiv.org/abs/2605.06535)) under `intermediate_data/`. **The first 100 samples of every theme are uncompressed and previewable directly in the browser**, mirroring the layout of the `{edit_type}/` preview folders described above.
 
 Taking `Sparkle_location_000000` as a running example, the artifact layout looks like:
 
@@ -402,7 +402,7 @@ Source videos in the `openve3m` theme are derived from [OpenVE-3M](https://arxiv
 
 ## 🎯 Benchmark
 
-**Sparkle-Bench** is the largest evaluation benchmark tailored for instruction-guided video background replacement, comprising **458 carefully curated videos across 4 themes, 21 subthemes, and 97 distinct scenes**. It is fully open-sourced at [🤗stdKonjac/Sparkle-Bench](https://huggingface.co/datasets/stdKonjac/Sparkle-Bench). For evaluation methodology and our six-dimensional scoring protocol, please refer to [our paper](https://arxiv.org/abs/XXX).
+**Sparkle-Bench** is the largest evaluation benchmark tailored for instruction-guided video background replacement, comprising **458 carefully curated videos across 4 themes, 21 subthemes, and 97 distinct scenes**. It is fully open-sourced at [🤗stdKonjac/Sparkle-Bench](https://huggingface.co/datasets/stdKonjac/Sparkle-Bench). For evaluation methodology and our six-dimensional scoring protocol, please refer to [our paper](https://arxiv.org/abs/2605.06535).
 
 **All source videos in the benchmark are uncompressed and previewable directly in the browser**, so users can inspect any sample without downloading anything.
 
@@ -505,7 +505,7 @@ After downloading, the relative paths in `{edit_type}_bench.csv` (e.g. `source_v
 
 ### 📊 Evaluation
 
-We provide an end-to-end evaluation script, [`eval_sparkle_bench_gemini.py`](https://github.com/showlab/Sparkle/blob/main/eval_sparkle_bench_gemini.py), that scores edited videos using Gemini-2.5-Pro under our six-dimensional rubric (see *Section 3.7* in [our paper](https://arxiv.org/abs/XXX)). The six dimensions are: **Instruction Compliance**, **Overall Visual Quality**, **Foreground Integrity**, **Foreground Motion Consistency**, **Background Dynamics**, and **Background Visual Quality**, each scored on a 1–5 scale.
+We provide an end-to-end evaluation script, [`eval_sparkle_bench_gemini.py`](https://github.com/showlab/Sparkle/blob/main/eval_sparkle_bench_gemini.py), that scores edited videos using Gemini-2.5-Pro under our six-dimensional rubric (see *Section 3.7* in [our paper](https://arxiv.org/abs/2605.06535)). The six dimensions are: **Instruction Compliance**, **Overall Visual Quality**, **Foreground Integrity**, **Foreground Motion Consistency**, **Background Dynamics**, and **Background Visual Quality**, each scored on a 1–5 scale.
 
 #### 1. Prepare your inference outputs
 
@@ -599,7 +599,7 @@ After scoring, the script aggregates per-theme and macro averages and prints a s
 
 ### 🖼️ Reference Images (Optional, Use with Caution)
 
-By construction, every Sparkle-Bench sample is a video that **passed the first four stages of our pipeline but failed the final synthesis quality check in Stage 5** (see Section 3.7 of [our paper](https://arxiv.org/abs/XXX)). As a free byproduct, this means each sample comes with a **pure background image** generated by Stage 3 (Individual Background Generation), where the foreground has been removed from the preliminarily edited first frame.
+By construction, every Sparkle-Bench sample is a video that **passed the first four stages of our pipeline but failed the final synthesis quality check in Stage 5** (see Section 3.7 of [our paper](https://arxiv.org/abs/2605.06535)). As a free byproduct, this means each sample comes with a **pure background image** generated by Stage 3 (Individual Background Generation), where the foreground has been removed from the preliminarily edited first frame.
 
 We release these images under `ref_images/{edit_type}/{id}.png`, alongside the CSV/JSONL annotations. These images may be useful for **reference-based** background-replacement experiments (e.g., feeding the clean background as an extra visual condition to the editing model).
 
@@ -692,3 +692,19 @@ Kiwi-Sparkle is released under the [Creative Commons Attribution 4.0 Internation
 ## 🙏 Acknowledgements
 
 This project is built on top of a number of excellent open-source projects. We thank the authors of [Kiwi-Edit](https://github.com/showlab/Kiwi-Edit), [FLUX.2-klein-9B](https://huggingface.co/black-forest-labs/FLUX.2-klein-9B), [Qwen3-VL-32B](https://huggingface.co/Qwen/Qwen3-VL-32B-Instruct), [Wan2.2-I2V-A14B](https://huggingface.co/Wan-AI/Wan2.2-I2V-A14B), [LightX2V](https://github.com/ModelTC/lightx2v), and [VideoX-Fun](https://github.com/aigc-apps/VideoX-Fun) for releasing the infrastructure that made this work possible.
+
+## 📝 Citation
+
+If you find Sparkle useful for your research, please consider citing our paper:
+
+```bibtex
+@misc{zeng2026sparkle,
+  title         = {Sparkle: Realizing Lively Instruction-Guided Video Background Replacement via Decoupled Guidance},
+  author        = {Zeng, Ziyun and Lin, Yiqi and Liang, Guoqiang and Shou, Mike Zheng},
+  year          = {2026},
+  eprint        = {2605.06535},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url           = {https://arxiv.org/abs/2605.06535}
+}
+```
