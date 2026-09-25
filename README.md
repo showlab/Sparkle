@@ -9,6 +9,10 @@
 [![Benchmark](https://img.shields.io/badge/🤗%20Benchmark-Sparkle--Bench-orange.svg)](https://huggingface.co/datasets/stdKonjac/Sparkle-Bench)
 [![Model](https://img.shields.io/badge/🤗%20Model-Kiwi--Sparkle-orange.svg)](https://huggingface.co/stdKonjac/Kiwi-Sparkle-720P-81F)
 
+## 📰 News
+
+- **[2026.09]** 🎉 Sparkle has been accepted to the **NeurIPS 2026 E&D Track**! The full data generation pipeline will be available soon.
+- **[2026.05]** Sparkle is now available. See our [project page](https://showlab.github.io/Sparkle/) to access the [paper](https://arxiv.org/abs/2605.06535), [dataset](https://huggingface.co/datasets/stdKonjac/Sparkle), [benchmark](https://huggingface.co/datasets/stdKonjac/Sparkle-Bench), and [model](https://huggingface.co/stdKonjac/Kiwi-Sparkle-720P-81F).
 
 ## 📦 Dataset
 
