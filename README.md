@@ -11,7 +11,8 @@
 
 ## 📰 News
 
-- **[2026.09]** 🎉 Sparkle has been accepted to the **NeurIPS 2026 E&D Track**! The full data generation pipeline will be available soon.
+- **[2026.10]** We have released the full data generation pipeline! See [this document](data_pipeline/README.md) for details.
+- **[2026.09]** 🎉 Sparkle has been accepted to the [**NeurIPS 2026 E&D Track**](https://neurips.cc/virtual/2026/loc/sydney/poster/139087)! The full data generation pipeline will be available soon.
 - **[2026.05]** Sparkle is now available. See our [project page](https://showlab.github.io/Sparkle/) to access the [paper](https://arxiv.org/abs/2605.06535), [dataset](https://huggingface.co/datasets/stdKonjac/Sparkle), [benchmark](https://huggingface.co/datasets/stdKonjac/Sparkle-Bench), and [model](https://huggingface.co/stdKonjac/Kiwi-Sparkle-720P-81F).
 
 ## 📦 Dataset

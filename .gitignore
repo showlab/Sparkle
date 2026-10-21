@@ -1,0 +1,8 @@
+# Downloaded LightX2V checkpoints.
+data_pipeline/stage3/LightX2V/wan2.2_i2v_A14b_low_noise_lightx2v_4step.safetensors
+data_pipeline/stage3/LightX2V/wan2.2_i2v_A14b_high_noise_lightx2v_4step_1030.safetensors
+
+# Preview videos and generated artifacts; keep the two provided CSV files.
+data_pipeline/location_train_preview100/*
+!data_pipeline/location_train_preview100/location_train_preview100.csv
+!data_pipeline/location_train_preview100/source_video.csv
