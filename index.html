@@ -67,15 +67,14 @@
             }
         }
 
-        .hero-title img.icon {
-            height: 1.1em;
-            vertical-align: -0.18em;
+        .hero-title .hero-logo {
+            white-space: nowrap;
         }
 
+        .hero-title img.icon,
         .hero-title img.sparkle-text {
             height: 1em;
-            vertical-align: -0.12em;
-            margin: 0 0.05em;
+            vertical-align: middle;
         }
 
         .hero-authors {
@@ -376,8 +375,7 @@
 <!-- ============ Hero ============ -->
 <header class="hero">
     <h1 class="hero-title">
-        <img src="assets/sparkle-icon.png" alt="" class="icon"/>
-        <img src="assets/sparkle-text.svg" alt="Sparkle" class="sparkle-text"/>:
+        <span class="hero-logo"><img src="assets/sparkle-icon.png" alt="" class="icon"/><img src="assets/sparkle-text.svg" alt="Sparkle" class="sparkle-text"/></span>:
         Realizing Lively Instruction-Guided<br/>
         Video Background Replacement via Decoupled Guidance
     </h1>
@@ -391,7 +389,7 @@
     <p class="hero-affil">
         <a href="https://sites.google.com/view/showlab">Show Lab</a>, National University of Singapore
     </p>
-    <p class="hero-venue-line">Published as a conference paper at NeurIPS 2026 E&amp;D.</p>
+    <p class="hero-venue-line">Published as a conference paper at NeurIPS 2026 E&amp;D</p>
 
     <div class="btn-row">
         <a class="btn-pill btn-paper" href="https://arxiv.org/abs/2605.06535">
