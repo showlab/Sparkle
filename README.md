@@ -1,4 +1,4 @@
-# <img src="assets/sparkle-icon.png" alt="" height="56" style="vertical-align: middle;"/><img src="assets/sparkle-text.svg" alt="Sparkle" height="56" style="vertical-align: middle;"/>: Realizing Lively Instruction-Guided Video Background Replacement via Decoupled Guidance
+# [NeurIPS 2026 E&D] <img src="assets/sparkle-icon.png" alt="" height="32" align="absmiddle"/><img src="assets/sparkle-text.svg" alt="Sparkle" height="32" align="absmiddle"/>: Realizing Lively Instruction-Guided Video Background Replacement via Decoupled Guidance
 
 [Ziyun Zeng](https://stdkonjac.icu/), Yiqi Lin, [Guoqiang Liang](https://ethanliang99.github.io/), and [Mike Zheng Shou](https://cde.nus.edu.sg/ece/staff/shou-zheng-mike/)
 
